@@ -13,6 +13,15 @@ public class Main {
     }
 
     public static void run(String[] argv, ClassLoader classLoader) throws IOException {
+        /*
+        wangtong
+        add support for system environment variable
+         */
+        String optionName = "cucumber_options";
+        if (System.getenv(optionName) != null){
+            System.setProperty("cucumber.options",System.getenv(optionName));
+        }
+
         RuntimeOptions runtimeOptions = new RuntimeOptions(System.getProperties(), argv);
 
         Runtime runtime = new Runtime(new MultiLoader(classLoader), classLoader, runtimeOptions);
