@@ -5,6 +5,7 @@ import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.SeeyonUtils;
 import gherkin.I18n;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -106,10 +107,17 @@ public class CucumberFeature {
     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
         formatter.uri(getUri());
         formatter.feature(getFeature());
-
+        //wangtong
+        SeeyonUtils util = new SeeyonUtils();
         for (CucumberTagStatement cucumberTagStatement : getFeatureElements()) {
+            //wangtong
+            String scenarioName = cucumberTagStatement.getVisualName();
+            long start = System.currentTimeMillis();
+            util.printDuration(scenarioName, 0, 0);
             //Run the scenario, it should handle before and after hooks
             cucumberTagStatement.run(formatter, reporter, runtime);
+            //wangtong
+            util.printDuration(scenarioName, start, System.currentTimeMillis());
         }
         formatter.eof();
 
