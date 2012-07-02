@@ -32,7 +32,9 @@ public class HTMLFormatter implements Formatter, Reporter {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String JS_FORMATTER_VAR = "formatter";
     private static final String JS_REPORT_FILENAME = "report.js";
-    private static final String[] TEXT_ASSETS = new String[]{"formatter.js", "index.html", "jquery-1.6.4.min.js", "style.css"};
+    //wangtong： add overview.html
+    private static final String[] TEXT_ASSETS = new String[]{"formatter.js", "index.html", "jquery-1.6.4.min.js", "style.css", "overview.html", "summary.css"};
+    //private static final String[] TEXT_ASSETS = new String[]{"formatter.js", "index.html", "jquery-1.6.4.min.js", "style.css"};
     private static final Map<String, String> MIME_TYPES_EXTENSIONS = new HashMap<String, String>() {
         {
             put("image/bmp", "bmp");

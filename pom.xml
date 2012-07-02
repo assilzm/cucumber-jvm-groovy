@@ -44,11 +44,11 @@
                 <artifactId>cucumber-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>info.cukes</groupId>
-                <artifactId>cucumber-java</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>info.cukes</groupId>-->
+                <!--<artifactId>cucumber-java</artifactId>-->
+                <!--<version>${project.version}</version>-->
+            <!--</dependency>-->
             <dependency>
                 <groupId>info.cukes</groupId>
                 <artifactId>cucumber-groovy</artifactId>
@@ -59,20 +59,20 @@
                 <artifactId>cucumber-junit</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>info.cukes</groupId>
-                <artifactId>cucumber-picocontainer</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>info.cukes</groupId>
-                <artifactId>cucumber-scala</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>info.cukes</groupId>-->
+                <!--<artifactId>cucumber-picocontainer</artifactId>-->
+                <!--<version>${project.version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>info.cukes</groupId>-->
+                <!--<artifactId>cucumber-scala</artifactId>-->
+                <!--<version>${project.version}</version>-->
+            <!--</dependency>-->
             <dependency>
                 <groupId>info.cukes</groupId>
                 <artifactId>cucumber-html</artifactId>
-                <version>0.2.1</version>
+                <version>0.2.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
@@ -104,103 +104,103 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.picocontainer</groupId>
-                <artifactId>picocontainer</artifactId>
-                <version>2.14.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-                <version>3.1.1.RELEASE</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.inject</groupId>
-                <artifactId>guice</artifactId>
-                <version>3.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-library</artifactId>
-                <version>2.10.0-M4</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-compiler</artifactId>
-                <version>2.10.0-M4</version>
-            </dependency>
-            <dependency>
-                <groupId>org.clojure</groupId>
-                <artifactId>clojure</artifactId>
-                <!-- Remember to bounce version in examples/clojure_cukes/project.clj as well -->
-                <version>1.5.0-alpha2</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.picocontainer</groupId>-->
+                <!--<artifactId>picocontainer</artifactId>-->
+                <!--<version>2.14.1</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.springframework</groupId>-->
+                <!--<artifactId>spring-tx</artifactId>-->
+                <!--<version>3.1.1.RELEASE</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>com.google.inject</groupId>-->
+                <!--<artifactId>guice</artifactId>-->
+                <!--<version>3.0</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.scala-lang</groupId>-->
+                <!--<artifactId>scala-library</artifactId>-->
+                <!--<version>2.10.0-M4</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.scala-lang</groupId>-->
+                <!--<artifactId>scala-compiler</artifactId>-->
+                <!--<version>2.10.0-M4</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.clojure</groupId>-->
+                <!--<artifactId>clojure</artifactId>-->
+                <!--&lt;!&ndash; Remember to bounce version in examples/clojure_cukes/project.clj as well &ndash;&gt;-->
+                <!--<version>1.5.0-alpha2</version>-->
+            <!--</dependency>-->
             <dependency>
                 <groupId>rhino</groupId>
                 <artifactId>js</artifactId>
                 <version>1.7R2</version>
             </dependency>
-            <dependency>
-                <groupId>org.ioke</groupId>
-                <artifactId>ioke-lang</artifactId>
-                <version>P-0.4.0-p11</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ioke</groupId>
-                <artifactId>ioke-lang-lib</artifactId>
-                <version>P-0.4.0-p11</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.ioke</groupId>-->
+                <!--<artifactId>ioke-lang</artifactId>-->
+                <!--<version>P-0.4.0-p11</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.ioke</groupId>-->
+                <!--<artifactId>ioke-lang-lib</artifactId>-->
+                <!--<version>P-0.4.0-p11</version>-->
+            <!--</dependency>-->
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.10</version>
             </dependency>
-            <dependency>
-                <groupId>org.python</groupId>
-                <artifactId>jython-standalone</artifactId>
-                <version>2.5.2</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.python</groupId>-->
+                <!--<artifactId>jython-standalone</artifactId>-->
+                <!--<version>2.5.2</version>-->
+            <!--</dependency>-->
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>1.9.0</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-chrome-driver</artifactId>
-                <version>2.24.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-server</artifactId>
-                <version>2.24.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.webbitserver</groupId>
-                <artifactId>webbit</artifactId>
-                <version>0.4.8</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jruby</groupId>
-                <artifactId>jruby-complete</artifactId>
-                <version>1.6.7.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.weld.se</groupId>
-                <artifactId>weld-se</artifactId>
-                <version>2.0.0.Alpha2</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.enterprise</groupId>
-                <artifactId>cdi-api</artifactId>
-                <version>1.1.EDR1.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.openejb</groupId>
-                <artifactId>openejb-core</artifactId>
-                <version>4.0.0</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.seleniumhq.selenium</groupId>-->
+                <!--<artifactId>selenium-chrome-driver</artifactId>-->
+                <!--<version>2.24.1</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.seleniumhq.selenium</groupId>-->
+                <!--<artifactId>selenium-server</artifactId>-->
+                <!--<version>2.24.1</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.webbitserver</groupId>-->
+                <!--<artifactId>webbit</artifactId>-->
+                <!--<version>0.4.8</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.jruby</groupId>-->
+                <!--<artifactId>jruby-complete</artifactId>-->
+                <!--<version>1.6.7.2</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.jboss.weld.se</groupId>-->
+                <!--<artifactId>weld-se</artifactId>-->
+                <!--<version>2.0.0.Alpha2</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>javax.enterprise</groupId>-->
+                <!--<artifactId>cdi-api</artifactId>-->
+                <!--<version>1.1.EDR1.2</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.apache.openejb</groupId>-->
+                <!--<artifactId>openejb-core</artifactId>-->
+                <!--<version>4.0.0</version>-->
+            <!--</dependency>-->
 
             <dependency>
                 <groupId>net.sourceforge.cobertura</groupId>

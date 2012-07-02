@@ -221,6 +221,9 @@ public class Runtime implements UnreportedStepExecutor {
 
     public void runStep(String uri, Step step, Reporter reporter, I18n i18n) {
         StepDefinitionMatch match;
+        //wangtong
+        SeeyonUtils util = new SeeyonUtils();
+        util.printStepStatus(step, null);
 
         try {
             match = glue.stepDefinitionMatch(uri, step, i18n);
@@ -229,6 +232,9 @@ public class Runtime implements UnreportedStepExecutor {
             reporter.result(new Result(Result.FAILED, 0L, e, DUMMY_ARG));
             addError(e);
             skipNextStep = true;
+            //wangtong
+            util.printStepStatus(step, new Result("failed", Long.valueOf(0L), e, DUMMY_ARG));
+
             return;
         }
 
@@ -238,6 +244,9 @@ public class Runtime implements UnreportedStepExecutor {
             reporter.match(Match.UNDEFINED);
             reporter.result(Result.UNDEFINED);
             skipNextStep = true;
+            //wangtong
+            util.printStepStatus(step, Result.UNDEFINED);
+
             return;
         }
 
@@ -248,6 +257,9 @@ public class Runtime implements UnreportedStepExecutor {
         if (skipNextStep) {
             scenarioResult.add(Result.SKIPPED);
             reporter.result(Result.SKIPPED);
+            //wangtong
+            util.printStepStatus(step, Result.SKIPPED);
+
         } else {
             String status = Result.PASSED;
             Throwable error = null;
@@ -264,6 +276,8 @@ public class Runtime implements UnreportedStepExecutor {
                 Result result = new Result(status, duration, error, DUMMY_ARG);
                 scenarioResult.add(result);
                 reporter.result(result);
+                //wangtong
+                util.printStepStatus(step, result);
             }
         }
     }

@@ -67,7 +67,9 @@ public class DataTable {
     }
 
     public <T> T convert(Type type) {
-        return tableConverter.convert(type, this);
+        //return tableConverter.convert(type, this);
+        //wangtong
+        return (T) tableConverter.convert(type, this);
     }
 
     /**
