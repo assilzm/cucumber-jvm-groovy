@@ -82,12 +82,52 @@ public class RuntimeOptionsTest {
     }
 
     @Test
-    public void overrides_options_with_system_properties() {
+    public void overrides_options_with_system_properties_without_clobbering_non_overridden_ones() {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--glue lookatme andmememe");
-        RuntimeOptions options = new RuntimeOptions(properties, "--glue", "somewhere", "somewhere_else");
-        assertEquals(asList("andmememe"), options.featurePaths);
-        assertEquals(asList("lookatme"), options.glue);
+        RuntimeOptions options = new RuntimeOptions(properties, "--strict", "--glue", "somewhere", "somewhere_else");
+        assertEquals(asList("somewhere_else", "andmememe"), options.featurePaths);
+        assertEquals(asList("somewhere", "lookatme"), options.glue);
+        assertTrue(options.strict);
     }
 
+    @Test
+    public void ensure_cli_glue_is_preserved_when_cucumber_options_property_defined() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--tags @foo");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(properties, "--glue", "somewhere");
+        assertEquals(asList("somewhere"), runtimeOptions.glue);
+    }
+
+    @Test
+    public void ensure_feature_paths_are_appended_to_when_cucumber_options_property_defined() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "somewhere_else");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(properties, "somewhere");
+        assertEquals(asList("somewhere", "somewhere_else"), runtimeOptions.featurePaths);
+    }
+
+    @Test
+    public void clobber_filters_from_cli_if_filters_specified_in_cucumber_options_property() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--tags @clobber_with_this");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(properties, "--tags", "@should_be_clobbered");
+        assertEquals(asList("@clobber_with_this"), runtimeOptions.filters);
+    }
+
+    @Test
+    public void preserves_filters_from_cli_if_filters_not_specified_in_cucumber_options_property() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--strict");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(properties, "--tags", "@keep_this");
+        assertEquals(asList("@keep_this"), runtimeOptions.filters);
+    }
+
+    @Test
+    public void allows_removal_of_strict_in_cucumber_options_property() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--no-strict");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(properties, "--strict");
+        assertFalse(runtimeOptions.strict);
+    }
 }

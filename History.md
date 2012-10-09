@@ -1,3 +1,33 @@
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...master)
+
+* [Java] The java module (and all other modules) finally compile on JDK 7 and OS X. (David Kowis, Sébastien Le Callonnec, Aslak Hellesøy)
+* [Core] The `cucumber.options` System property will no longer completely override all arguments set in `@Cucumber.Options` or
+  on the command line. Instead, it will keep those and only override those that are specified in `cucumber.options`.
+  Special cases are `--tags`, `--name` and `path:line`, which will override previous tags/names/lines. To override a boolean
+  option (options that don't take arguments like `--monochrome`), use the `--no-` counterpart (`--no-monochrome`). ([#388](https://github.com/cucumber/cucumber-jvm/pull/388) Sébastien Le Callonnec, Aslak Hellesøy)
+
+## [1.0.14](https://github.com/cucumber/cucumber-jvm/compare/v1.0.12...v1.0.14)
+
+(The 1.0.13 release failed half way through)
+
+* [Core] gherkin.jar, gherkin-jvm-deps.jar and cucumber-jvm-deps.jar are embedded inside cucumber-core.jar (to simplify installation) (Aslak Hellesøy)
+
+## [1.0.12](https://github.com/cucumber/cucumber-jvm/compare/v1.0.11...v1.0.12)
+
+* [Core] No img data in embeddings using both json and html reports ([#339](https://github.com/cucumber/cucumber-jvm/issues/339) Aslak Hellesøy)
+* [Core] JUnit assume failures (`AssumptionViolatedException`) behaves in the same way as pending (`cucumber.runtime.PendingException`) ([#359](https://github.com/cucumber/cucumber-jvm/issues/359) Aslak Hellesøy, Kim Saabye Pedersen)
+* [Core] Extend url protocols. This makes it possible to load features and glue from within a container such as Arquilian. ([#360](https://github.com/cucumber/cucumber-jvm/issues/360), [#361](https://github.com/cucumber/cucumber-jvm/pull/361) Logan McGrath)
+* [Jython] Jython Before/After Annotations ([#362](https://github.com/cucumber/cucumber-jvm/pull/362) Stephen Abrams)
+* [Java] Support for delimited lists in step parameters ([#364](https://github.com/cucumber/cucumber-jvm/issues/364), [#371](https://github.com/cucumber/cucumber-jvm/pull/371) Marquis Wang)
+* [Groovy] Load `env.groovy` before other glue code files. ([#374](https://github.com/cucumber/cucumber-jvm/pull/374) Tomas Bezdek)
+* [Clojure] Add utilities for reading tables ([#376](https://github.com/cucumber/cucumber-jvm/pull/376) rplevy-draker)
+
+## [1.0.11](https://github.com/cucumber/cucumber-jvm/compare/v1.0.10...v1.0.11)
+
+* [Core] Added a new `@Transform` annotation and an abstract `Transformer` class giving full control over argument transforms.
+* [OpenEJB] Remove log4j need for openejb module ([#355](https://github.com/cucumber/cucumber-jvm/pull/355) rmannibucau)
+* [JUnit] JUnit report doesn't correctly report errors ([#315](https://github.com/cucumber/cucumber-jvm/issues/315), [#356](https://github.com/cucumber/cucumber-jvm/pull/356) Kevin Cunningham)
+
 ## [1.0.10](https://github.com/cucumber/cucumber-jvm/compare/v1.0.9...v1.0.10)
 
 * [Core] Automatically convert data tables to lists of enums just as is done with classes [#346](https://github.com/cucumber/cucumber-jvm/issues/346)

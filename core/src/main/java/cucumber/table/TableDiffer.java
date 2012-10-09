@@ -1,8 +1,8 @@
 package cucumber.table;
 
-import difflib.Delta;
-import difflib.DiffUtils;
-import difflib.Patch;
+import cucumber.deps.difflib.Delta;
+import cucumber.deps.difflib.DiffUtils;
+import cucumber.deps.difflib.Patch;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Row;
 

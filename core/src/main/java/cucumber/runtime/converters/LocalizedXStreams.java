@@ -1,11 +1,11 @@
 package cucumber.runtime.converters;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.ConverterLookup;
-import com.thoughtworks.xstream.converters.ConverterRegistry;
-import com.thoughtworks.xstream.converters.SingleValueConverter;
-import com.thoughtworks.xstream.core.DefaultConverterLookup;
+import cucumber.deps.com.thoughtworks.xstream.XStream;
+import cucumber.deps.com.thoughtworks.xstream.converters.Converter;
+import cucumber.deps.com.thoughtworks.xstream.converters.ConverterLookup;
+import cucumber.deps.com.thoughtworks.xstream.converters.ConverterRegistry;
+import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
+import cucumber.deps.com.thoughtworks.xstream.core.DefaultConverterLookup;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -55,6 +55,9 @@ public class LocalizedXStreams {
             register(converterRegistry, new FloatConverter(locale));
             register(converterRegistry, new IntegerConverter(locale));
             register(converterRegistry, new LongConverter(locale));
+
+            // Must be lower priority than the ones above, but higher than xstream's built-in ReflectionConverter
+            converterRegistry.registerConverter(new SingleValueConverterWrapperExt(new ClassWithStringConstructorConverter()), XStream.PRIORITY_LOW);
         }
 
         private void register(ConverterRegistry lookup, SingleValueConverter converter) {
@@ -81,7 +84,7 @@ public class LocalizedXStreams {
         }
 
         public SingleValueConverter getSingleValueConverter(Type type) {
-            if(Object.class.equals(type)) {
+            if (Object.class.equals(type)) {
                 type = String.class;
             }
             if (type instanceof Class) {

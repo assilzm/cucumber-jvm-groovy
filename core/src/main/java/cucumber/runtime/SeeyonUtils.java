@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
- * User: Administrator
- * Date: 12-6-10
+ * User: Wangtong
+ * Date: 12-10-08
  * Time: 下午2:43
  * To change this template use File | Settings | File Templates.
  */
@@ -65,5 +65,3 @@ public class SeeyonUtils {
     }
 
 }
-
-

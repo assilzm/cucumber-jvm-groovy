@@ -33,16 +33,15 @@ public class RuntimeOptions {
     public File dotCucumber;
     public boolean dryRun;
     public boolean strict = false;
-    private boolean monochrome = false;
+    public boolean monochrome = false;
 
     public RuntimeOptions(Properties properties, String... argv) {
-        String[] args;
+        /* IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes */
+
+        parse(new ArrayList<String>(asList(argv)));
         if (properties.containsKey("cucumber.options")) {
-            args = properties.getProperty("cucumber.options").split(" ");
-        } else {
-            args = argv;
+            parse(new ArrayList<String>(asList(properties.getProperty("cucumber.options").split(" "))));
         }
-        parse(new ArrayList<String>(asList(args)));
 
         if (formatters.isEmpty()) {
             formatters.add(new ProgressFormatter(System.out));
@@ -58,6 +57,7 @@ public class RuntimeOptions {
     private void parse(List<String> args) {
         FormatterFactory formatterFactory = new FormatterFactory();
 
+        List<Object> parsedFilters = new ArrayList<Object>();
         while (!args.isEmpty()) {
             String arg = args.remove(0);
 
@@ -71,26 +71,30 @@ public class RuntimeOptions {
                 String gluePath = args.remove(0);
                 glue.add(gluePath);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
-                filters.add(args.remove(0));
+                parsedFilters.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
                 formatters.add(formatterFactory.create(args.remove(0)));
             } else if (arg.equals("--dotcucumber")) {
                 dotCucumber = new File(args.remove(0));
-            } else if (arg.equals("--dry-run") || arg.equals("-d")) {
-                dryRun = true;
-            } else if (arg.equals("--strict") || arg.equals("-s")) {
-                strict = true;
-            } else if (arg.equals("--monochrome") || arg.equals("-m")) {
-                monochrome = true;
+            } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
+                dryRun = !arg.startsWith("--no-");
+            } else if (arg.equals("--no-strict") || arg.equals("--strict") || arg.equals("-s")) {
+                strict = !arg.startsWith("--no-");
+            } else if (arg.equals("--no-monochrome") || arg.equals("--monochrome") || arg.equals("-m")) {
+                monochrome = !arg.startsWith("--no-");
             } else if (arg.equals("--name") || arg.equals("-n")) {
                 String nextArg = args.remove(0);
                 Pattern patternFilter = Pattern.compile(nextArg);
-                filters.add(patternFilter);
+                parsedFilters.add(patternFilter);
             } else {
                 PathWithLines pathWithLines = new PathWithLines(arg);
                 featurePaths.add(pathWithLines.path);
-                filters.addAll(pathWithLines.lines);
+                parsedFilters.addAll(pathWithLines.lines);
             }
+        }
+        if (!parsedFilters.isEmpty()) {
+            filters.clear();
+            filters.addAll(parsedFilters);
         }
     }
 

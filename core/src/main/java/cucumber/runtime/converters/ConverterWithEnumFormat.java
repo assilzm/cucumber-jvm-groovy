@@ -1,6 +1,6 @@
 package cucumber.runtime.converters;
 
-import com.thoughtworks.xstream.converters.ConversionException;
+import cucumber.deps.com.thoughtworks.xstream.converters.ConversionException;
 
 import java.text.FieldPosition;
 import java.text.Format;

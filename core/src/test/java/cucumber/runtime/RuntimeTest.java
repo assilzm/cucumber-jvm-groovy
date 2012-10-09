@@ -6,7 +6,9 @@ import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
 import gherkin.formatter.JSONPrettyFormatter;
 import gherkin.formatter.model.Step;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.internal.AssumptionViolatedException;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,6 +24,7 @@ public class RuntimeTest {
 
     private static final I18n ENGLISH = new I18n("en");
 
+    //@Ignore
     @Test
     public void runs_feature_with_json_formatter() throws Exception {
         CucumberFeature feature = feature("test.feature", "" +
@@ -131,6 +134,14 @@ public class RuntimeTest {
     public void non_strict_with_pending_steps() {
         Runtime runtime = createNonStrictRuntime();
         runtime.addError(new PendingException());
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void non_strict_with_failed_junit_assumption() {
+        Runtime runtime = createNonStrictRuntime();
+        runtime.addError(new AssumptionViolatedException("should be treated like pending"));
 
         assertEquals(0x0, runtime.exitStatus());
     }

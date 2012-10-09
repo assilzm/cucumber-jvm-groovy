@@ -21,7 +21,6 @@ public class Main {
         if (System.getenv(optionName) != null){
             System.setProperty("cucumber.options",System.getenv(optionName));
         }
-
         RuntimeOptions runtimeOptions = new RuntimeOptions(System.getProperties(), argv);
 
         Runtime runtime = new Runtime(new MultiLoader(classLoader), classLoader, runtimeOptions);

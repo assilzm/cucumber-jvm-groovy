@@ -1,7 +1,7 @@
 package cucumber.runtime.converters;
 
-import com.thoughtworks.xstream.converters.SingleValueConverter;
-import com.thoughtworks.xstream.converters.SingleValueConverterWrapper;
+import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
+import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverterWrapper;
 
 /**
  * Subclass that exposes the wrapped converter
