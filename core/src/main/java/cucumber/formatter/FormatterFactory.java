@@ -5,9 +5,7 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.JSONPrettyFormatter;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -20,10 +18,10 @@ import static java.util.Arrays.asList;
 /**
  * This class creates {@link Formatter} instances (that may also implement {@link gherkin.formatter.Reporter} from
  * a String.
- *
+ * <p/>
  * The String is of the form name[:output] where name is either a fully qualified class name or one of the built-in short names.
  * output is optional for some formatters (and mandatory for some) and must refer to a path on the file system.
- *
+ * <p/>
  * The formatter class must have a single argument constructor that takes either an {@link Appendable} or a {@link File}.
  */
 public class FormatterFactory {
@@ -93,7 +91,9 @@ public class FormatterFactory {
             return ctorArg;
         }
         if (ctorArgClass.equals(Appendable.class) && ctorArg instanceof File) {
-            return new FileWriter((File) ctorArg);
+//            return new FileWriter((File) ctorArg);
+            return new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream((File) ctorArg), "utf-8"));
         }
         return null;
     }

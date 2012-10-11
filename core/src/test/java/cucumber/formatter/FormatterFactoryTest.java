@@ -4,6 +4,7 @@ import cucumber.runtime.CucumberException;
 import gherkin.formatter.Formatter;
 import org.junit.Test;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -80,7 +81,9 @@ public class FormatterFactoryTest {
         assertEquals(System.out, formatter.out);
 
         WantsAppendable formatter2 = (WantsAppendable) fc.create("cucumber.formatter.FormatterFactoryTest$WantsAppendable:" + createTempFile().getAbsolutePath());
-        assertEquals(FileWriter.class, formatter2.out.getClass());
+//        assertEquals(FileWriter.class, formatter2.out.getClass());
+        //wangtong
+        assertEquals(BufferedWriter.class, formatter2.out.getClass());
     }
 
     @Test
