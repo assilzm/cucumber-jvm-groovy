@@ -1,10 +1,11 @@
 package cucumber.runtime;
 
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.io.ResourceLoader;
-import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.api.Pending;
+import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.SummaryPrinter;
+import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
@@ -31,7 +32,6 @@ import java.util.Set;
 public class Runtime implements UnreportedStepExecutor {
 
     private static final String[] PENDING_EXCEPTIONS = new String[]{
-            PendingException.class.getName(),
             "org.junit.internal.AssumptionViolatedException"
     };
 
@@ -55,7 +55,7 @@ public class Runtime implements UnreportedStepExecutor {
     //TODO: These are really state machine variables, and I'm not sure the runtime is the best place for this state machine
     //They really should be created each time a scenario is run, not in here
     private boolean skipNextStep = false;
-    private ScenarioResultImpl scenarioResult = null;
+    private ScenarioImpl scenarioResult = null;
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
         this(resourceLoader, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions);
@@ -117,7 +117,7 @@ public class Runtime implements UnreportedStepExecutor {
         undefinedStepsTracker.reset();
         //TODO: this is the initial state of the state machine, it should not go here, but into something else
         skipNextStep = false;
-        scenarioResult = new ScenarioResultImpl(reporter);
+        scenarioResult = new ScenarioImpl(reporter);
     }
 
     public void disposeBackendWorlds() {
@@ -180,26 +180,30 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
-        for (HookDefinition hook : hooks) {
-            runHookIfTagsMatch(hook, reporter, tags, isBefore);
+        if (!runtimeOptions.dryRun) {
+            for (HookDefinition hook : hooks) {
+                runHookIfTagsMatch(hook, reporter, tags, isBefore);
+            }
         }
     }
 
     private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<Tag> tags, boolean isBefore) {
         if (hook.matches(tags)) {
+            String status = Result.PASSED;
+            Throwable error = null;
+            Match match = new Match(Collections.<Argument>emptyList(), hook.getLocation(false));
             long start = System.nanoTime();
             try {
                 hook.execute(scenarioResult);
             } catch (Throwable t) {
-                skipNextStep = true;
-                long duration = System.nanoTime() - start;
-
-                String status = isPending(t) ? "pending" : Result.FAILED;
-                Result result = new Result(status, duration, t, DUMMY_ARG);
-                scenarioResult.add(result);
+                error = t;
+                status = isPending(t) ? "pending" : Result.FAILED;
                 addError(t);
-
-                Match match = new Match(Collections.<Argument>emptyList(), hook.getLocation(false));
+                skipNextStep = true;
+            } finally {
+                long duration = System.nanoTime() - start;
+                Result result = new Result(status, duration, error, DUMMY_ARG);
+                scenarioResult.add(result);
                 if (isBefore) {
                     reporter.before(match, result);
                 } else {
@@ -208,7 +212,6 @@ public class Runtime implements UnreportedStepExecutor {
             }
         }
     }
-
 
     //TODO: Maybe this should go into the cucumber step execution model and it should return the result of that execution!
     @Override
@@ -231,10 +234,11 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void runStep(String uri, Step step, Reporter reporter, I18n i18n) {
+        //wangtong add start.
+        TimerUtils timer = new TimerUtils();
+        timer.start(step);
+        //wangtong add end.
         StepDefinitionMatch match;
-        //wangtong
-        SeeyonUtils util = new SeeyonUtils();
-        util.printStepStatus(step, null);
 
         try {
             match = glue.stepDefinitionMatch(uri, step, i18n);
@@ -243,8 +247,9 @@ public class Runtime implements UnreportedStepExecutor {
             reporter.result(new Result(Result.FAILED, 0L, e, DUMMY_ARG));
             addError(e);
             skipNextStep = true;
-            //wangtong
-            util.printStepStatus(step, new Result("failed", Long.valueOf(0L), e, DUMMY_ARG));
+            //wangtong add start.
+            timer.end(new Result(Result.FAILED, 0L, e, DUMMY_ARG));
+            //wangtong add end.
             return;
         }
 
@@ -254,8 +259,9 @@ public class Runtime implements UnreportedStepExecutor {
             reporter.match(Match.UNDEFINED);
             reporter.result(Result.UNDEFINED);
             skipNextStep = true;
-            //wangtong
-            util.printStepStatus(step, Result.UNDEFINED);
+            //wangtong add start.
+            timer.end(Result.UNDEFINED);
+            //wangtong add end.
             return;
         }
 
@@ -266,8 +272,9 @@ public class Runtime implements UnreportedStepExecutor {
         if (skipNextStep) {
             scenarioResult.add(Result.SKIPPED);
             reporter.result(Result.SKIPPED);
-            //wangtong
-            util.printStepStatus(step, Result.SKIPPED);
+            //wangtong add start.
+            timer.end(Result.SKIPPED);
+            //wangtong add end.
         } else {
             String status = Result.PASSED;
             Throwable error = null;
@@ -284,14 +291,18 @@ public class Runtime implements UnreportedStepExecutor {
                 Result result = new Result(status, duration, error, DUMMY_ARG);
                 scenarioResult.add(result);
                 reporter.result(result);
-                //wangtong
-                util.printStepStatus(step, result);
+                //wangtong add start.
+                timer.end(result);
+                //wangtong add end.
             }
         }
     }
 
-    private static boolean isPending(Throwable t) {
-        return Arrays.binarySearch(PENDING_EXCEPTIONS, t.getClass().getName()) >= 0;
+    public static boolean isPending(Throwable t) {
+        if (t == null) {
+            return false;
+        }
+        return t.getClass().isAnnotationPresent(Pending.class) || Arrays.binarySearch(PENDING_EXCEPTIONS, t.getClass().getName()) >= 0;
     }
 
     public void writeStepdefsJson() throws IOException {

@@ -1,12 +1,12 @@
 package cucumber.runtime.autocomplete;
 
-import cucumber.io.Resource;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.JdkPatternArgumentMatcher;
-import cucumber.runtime.ParameterType;
+import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
+import cucumber.runtime.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.table.TypeReference;
+import cucumber.runtime.table.TypeReference;
 import gherkin.I18n;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
@@ -69,7 +69,8 @@ public class StepdefGeneratorTest {
                 "    ]\n" +
                 "  }\n" +
                 "]";
-        assertEquals(GSON.fromJson(expectedJson, new TypeReference<List<MetaStepdef>>(){}.getType()), metadata);
+        assertEquals(GSON.fromJson(expectedJson, new TypeReference<List<MetaStepdef>>() {
+        }.getType()), metadata);
     }
 
     private List<CucumberFeature> features() throws IOException {
@@ -124,7 +125,7 @@ public class StepdefGeneratorTest {
             }
 
             @Override
-            public ParameterType getParameterType(int n, Type argumentType) {
+            public ParameterInfo getParameterType(int n, Type argumentType) {
                 return null;
             }
 

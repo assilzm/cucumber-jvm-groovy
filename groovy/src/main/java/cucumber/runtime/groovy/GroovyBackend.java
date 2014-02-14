@@ -1,12 +1,12 @@
 package cucumber.runtime.groovy;
 
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.io.Resource;
-import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
+import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runtime.io.Resource;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.TagExpression;
 import gherkin.formatter.model.Step;
@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static cucumber.io.MultiLoader.packageName;
+import static cucumber.runtime.io.MultiLoader.packageName;
 
 
 public class GroovyBackend implements Backend {
-    static GroovyBackend instance;
+    public static GroovyBackend instance;
     private final Set<Class> scripts = new HashSet<Class>();
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new GroovySnippet());
     private final ResourceLoader resourceLoader;
@@ -37,7 +37,7 @@ public class GroovyBackend implements Backend {
     private final ClasspathResourceLoader classpathResourceLoader;
 
     private Closure worldClosure;
-    private Object groovyWorld;
+    private Object world;
     private Glue glue;
 
     private static GroovyShell createShell() {
@@ -97,6 +97,7 @@ public class GroovyBackend implements Backend {
 
     @Override
     public void buildWorld() {
+        world = worldClosure == null ? new Object() : worldClosure.call();
     }
 
     private Script parse(Resource resource) {
@@ -113,7 +114,7 @@ public class GroovyBackend implements Backend {
 
     @Override
     public void disposeWorld() {
-        this.groovyWorld = null;
+        this.world = null;
     }
 
     @Override
@@ -126,6 +127,7 @@ public class GroovyBackend implements Backend {
     }
 
     public void registerWorld(Closure closure) {
+        if (worldClosure != null) throw new CucumberException("World is already set");
         worldClosure = closure;
     }
 
@@ -138,19 +140,12 @@ public class GroovyBackend implements Backend {
     }
 
     public void invoke(Closure body, Object[] args) throws Throwable {
-        body.setDelegate(getGroovyWorld());
+        body.setDelegate(world);
         try {
             body.call(args);
-        } catch(InvokerInvocationException e) {
+        } catch (InvokerInvocationException e) {
             throw e.getCause();
         }
-    }
-
-    private Object getGroovyWorld() {
-        if (groovyWorld == null) {
-            groovyWorld = worldClosure == null ? new Object() : worldClosure.call();
-        }
-        return groovyWorld;
     }
 
     private static StackTraceElement currentLocation() {

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class CucumberScenarioOutline extends CucumberTagStatement {
     private final List<CucumberExamples> cucumberExamplesList = new ArrayList<CucumberExamples>();
@@ -38,17 +39,33 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
     @Override
     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
         format(formatter);
+        formatSteps(formatter);
         for (CucumberExamples cucumberExamples : cucumberExamplesList) {
             cucumberExamples.format(formatter);
             List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
             for (CucumberScenario exampleScenario : exampleScenarios) {
+                //wangtong add start
+                long start = System.nanoTime();
+                System.out.println("\r\nexample start.");
+                //wangtong add end
                 exampleScenario.run(formatter, reporter, runtime);
+                //wangtong add start
+                long _cost = System.nanoTime() - start;
+                System.out.println("\r\nexample end in " +
+                        String.format("%d min %d sec %d ms",
+                                TimeUnit.NANOSECONDS.toMinutes(_cost),
+                                TimeUnit.NANOSECONDS.toSeconds(_cost) -
+                                        TimeUnit.MINUTES.toSeconds(TimeUnit.NANOSECONDS.toMinutes(_cost)),
+                                TimeUnit.NANOSECONDS.toMillis(_cost) - TimeUnit.SECONDS.toMillis(TimeUnit.NANOSECONDS.toSeconds(_cost))
+                        )
+                );
+                //wangtong add end
             }
         }
     }
 
     CucumberScenario createExampleScenario(ExamplesTableRow header, ExamplesTableRow example, List<Tag> examplesTags) {
-        Scenario exampleScenario = new Scenario(example.getComments(), examplesTags, tagStatement.getKeyword(), tagStatement.getName(), "", example.getLine(), example.getId());
+        Scenario exampleScenario = new Scenario(example.getComments(), examplesTags, getGherkinModel().getKeyword(), getGherkinModel().getName(), "", example.getLine(), example.getId());
         CucumberScenario cucumberScenario = new CucumberScenario(cucumberFeature, cucumberBackground, exampleScenario, example);
         for (Step step : getSteps()) {
             cucumberScenario.step(createExampleStep(step, header, example));

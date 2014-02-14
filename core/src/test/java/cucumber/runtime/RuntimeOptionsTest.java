@@ -1,21 +1,22 @@
 package cucumber.runtime;
 
-import cucumber.formatter.HTMLFormatter;
 import org.junit.Test;
 
-import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class RuntimeOptionsTest {
     @Test
     public void has_version_from_properties_file() {
-        assertTrue(RuntimeOptions.VERSION.startsWith("1.0"));
+        assertTrue(RuntimeOptions.VERSION.startsWith("1.1"));
     }
 
     @Test
@@ -30,21 +31,27 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void strips_options() {
+        RuntimeOptions options = new RuntimeOptions(new Properties(), "  --glue ", "somewhere", "somewhere_else");
+        assertEquals(asList("somewhere_else"), options.featurePaths);
+    }
+
+    @Test
     public void assigns_glue() {
         RuntimeOptions options = new RuntimeOptions(new Properties(), "--glue", "somewhere");
         assertEquals(asList("somewhere"), options.glue);
     }
 
     @Test
-    public void assigns_dotcucumber() {
+    public void assigns_dotcucumber() throws MalformedURLException {
         RuntimeOptions options = new RuntimeOptions(new Properties(), "--dotcucumber", "somewhere", "--glue", "somewhere");
-        assertEquals(new File("somewhere"), options.dotCucumber);
+        assertEquals(new URL("file:somewhere/"), options.dotCucumber);
     }
 
     @Test
     public void creates_formatter() {
         RuntimeOptions options = new RuntimeOptions(new Properties(), "--format", "html:some/dir", "--glue", "somewhere");
-        assertEquals(HTMLFormatter.class, options.formatters.get(0).getClass());
+        assertEquals("cucumber.runtime.formatter.HTMLFormatter", options.formatters.get(0).getClass().getName());
     }
 
     @Test
@@ -66,19 +73,36 @@ public class RuntimeOptionsTest {
     }
 
     @Test
-    public void name() {
-        String someName = "someName";
-        RuntimeOptions options = new RuntimeOptions(new Properties(), "--name", someName);
+    public void name_without_spaces_is_preserved() {
+        RuntimeOptions options = new RuntimeOptions(new Properties(), "--name", "someName");
         Pattern actualPattern = (Pattern) options.filters.iterator().next();
-        assertEquals(someName, actualPattern.pattern());
+        assertEquals("someName", actualPattern.pattern());
     }
 
     @Test
-    public void name_short() {
-        String someName = "someName";
-        RuntimeOptions options = new RuntimeOptions(new Properties(), "-n", someName);
+    public void name_with_spaces_is_preserved() {
+        RuntimeOptions options = new RuntimeOptions(new Properties(), "--name", "some Name");
         Pattern actualPattern = (Pattern) options.filters.iterator().next();
-        assertEquals(someName, actualPattern.pattern());
+        assertEquals("some Name", actualPattern.pattern());
+    }
+
+    @Test
+    public void ensure_name_with_spaces_works_with_cucumber_options() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--name 'some Name'");
+        RuntimeOptions options = new RuntimeOptions(properties);
+        Pattern actualPattern = (Pattern) options.filters.iterator().next();
+        assertEquals("some Name", actualPattern.pattern());
+    }
+
+    @Test
+    public void ensure_multiple_cucumber_options_with_spaces_parse_correctly() throws MalformedURLException {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--name 'some Name' --dotcucumber 'some file\\path'");
+        RuntimeOptions options = new RuntimeOptions(properties);
+        Pattern actualPattern = (Pattern) options.filters.iterator().next();
+        assertEquals("some Name", actualPattern.pattern());
+        assertEquals(new URL("file:some file\\path/"), options.dotCucumber);
     }
 
     @Test
@@ -130,4 +154,15 @@ public class RuntimeOptionsTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(properties, "--strict");
         assertFalse(runtimeOptions.strict);
     }
+
+    @Test
+    public void fail_on_unsupported_options() {
+        try {
+            new RuntimeOptions(new Properties(), "-concreteUnsupportedOption", "somewhere", "somewhere_else");
+            fail();
+        } catch (CucumberException e) {
+            assertEquals("Unknown option: -concreteUnsupportedOption", e.getMessage());
+        }
+    }
+
 }

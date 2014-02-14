@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
-import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.table.DataTable;
-import cucumber.table.TableConverter;
+import cucumber.api.DataTable;
+import cucumber.runtime.table.TableConverter;
+import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.DataTableRow;
@@ -64,15 +64,10 @@ public class StepDefinitionMatch extends Match {
 
         List<Object> result = new ArrayList<Object>();
 
-        List<ParameterType> parameterTypes = new ArrayList<ParameterType>();
         int n = 0;
         for (Argument a : getArguments()) {
-            Object arg;
-
-            ParameterType parameterType = getParameterType(n, String.class);
-            parameterTypes.add(parameterType);
-
-            arg = parameterType.convert(a.getVal(), xStream, locale);
+            ParameterInfo parameterInfo = getParameterType(n, String.class);
+            Object arg = parameterInfo.convert(a.getVal(), xStream);
             result.add(arg);
             n++;
         }
@@ -85,19 +80,19 @@ public class StepDefinitionMatch extends Match {
         return result.toArray(new Object[result.size()]);
     }
 
-    private ParameterType getParameterType(int n, Type argumentType) {
-        ParameterType parameterType = stepDefinition.getParameterType(n, argumentType);
-        if (parameterType == null) {
+    private ParameterInfo getParameterType(int n, Type argumentType) {
+        ParameterInfo parameterInfo = stepDefinition.getParameterType(n, argumentType);
+        if (parameterInfo == null) {
             // Some backends return null because they don't know
-            parameterType = new ParameterType(argumentType, null, null, null);
+            parameterInfo = new ParameterInfo(argumentType, null, null, null);
         }
-        return parameterType;
+        return parameterInfo;
     }
 
     private Object tableArgument(Step step, int argIndex, LocalizedXStreams.LocalizedXStream xStream) {
-        ParameterType parameterType = getParameterType(argIndex, DataTable.class);
-        DataTable table = new DataTable(step.getRows(), new TableConverter(xStream, parameterType.getDateFormat()));
-        Type type = parameterType.getType();
+        ParameterInfo parameterInfo = getParameterType(argIndex, DataTable.class);
+        DataTable table = new DataTable(step.getRows(), new TableConverter(xStream, parameterInfo));
+        Type type = parameterInfo.getType();
         return table.convert(type);
     }
 

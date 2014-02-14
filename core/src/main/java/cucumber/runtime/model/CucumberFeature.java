@@ -1,10 +1,10 @@
 package cucumber.runtime.model;
 
-import cucumber.io.Resource;
-import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.io.Resource;
+import cucumber.runtime.io.ResourceLoader;
 import gherkin.I18n;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class CucumberFeature {
     private final String uri;
@@ -83,7 +84,7 @@ public class CucumberFeature {
         currentStepContainer.step(step);
     }
 
-    public Feature getFeature() {
+    public Feature getGherkinFeature() {
         return feature;
     }
 
@@ -105,11 +106,27 @@ public class CucumberFeature {
 
     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
         formatter.uri(getUri());
-        formatter.feature(getFeature());
+        formatter.feature(getGherkinFeature());
 
         for (CucumberTagStatement cucumberTagStatement : getFeatureElements()) {
+            //wangtong add start
+            String scenarioName = cucumberTagStatement.getVisualName();
+            long start = System.nanoTime();
+            System.out.println("\r\n[" + scenarioName + "] start!");
+            //wangtong add end
             //Run the scenario, it should handle before and after hooks
             cucumberTagStatement.run(formatter, reporter, runtime);
+            //wangtong add start
+            long _cost = System.nanoTime() - start;
+            System.out.println("\r\n[" + scenarioName + "] end in " +
+                    String.format("%d min %d sec %d ms",
+                            TimeUnit.NANOSECONDS.toMinutes(_cost),
+                            TimeUnit.NANOSECONDS.toSeconds(_cost) -
+                                    TimeUnit.MINUTES.toSeconds(TimeUnit.NANOSECONDS.toMinutes(_cost)),
+                            TimeUnit.NANOSECONDS.toMillis(_cost) - TimeUnit.SECONDS.toMillis(TimeUnit.NANOSECONDS.toSeconds(_cost))
+                    )
+            );
+            //wangtong add end
         }
         formatter.eof();
 

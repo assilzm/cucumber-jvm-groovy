@@ -1,12 +1,12 @@
 package cucumber.runtime;
 
-import cucumber.io.ClasspathResourceLoader;
+import cucumber.api.Scenario;
+import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Tag;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -33,12 +33,12 @@ public class HookTest {
         Backend backend = mock(Backend.class);
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyListOf(Tag.class))).thenReturn(true);
-        Scenario gherkinScenario = mock(Scenario.class);
+        gherkin.formatter.model.Scenario gherkinScenario = mock(gherkin.formatter.model.Scenario.class);
 
         CucumberFeature feature = mock(CucumberFeature.class);
         Feature gherkinFeature = mock(Feature.class);
 
-        when(feature.getFeature()).thenReturn(gherkinFeature);
+        when(feature.getGherkinFeature()).thenReturn(gherkinFeature);
         when(gherkinFeature.getTags()).thenReturn(new ArrayList<Tag>());
 
         CucumberScenario scenario = new CucumberScenario(feature, null, gherkinScenario);
@@ -51,7 +51,7 @@ public class HookTest {
         scenario.run(mock(Formatter.class), mock(Reporter.class), runtime);
 
         InOrder inOrder = inOrder(hook, backend);
-        inOrder.verify(hook).execute(Matchers.<ScenarioResult>any());
+        inOrder.verify(hook).execute(Matchers.<Scenario>any());
         inOrder.verify(backend).disposeWorld();
     }
 

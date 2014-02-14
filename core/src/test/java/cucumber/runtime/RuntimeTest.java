@@ -1,7 +1,8 @@
 package cucumber.runtime;
 
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.io.ResourceLoader;
+import cucumber.api.PendingException;
+import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
 import gherkin.formatter.JSONPrettyFormatter;
@@ -24,7 +25,7 @@ public class RuntimeTest {
 
     private static final I18n ENGLISH = new I18n("en");
 
-    //@Ignore
+    @Ignore
     @Test
     public void runs_feature_with_json_formatter() throws Exception {
         CucumberFeature feature = feature("test.feature", "" +
@@ -163,11 +164,11 @@ public class RuntimeTest {
     }
 
     private Runtime createStrictRuntime() {
-        return createRuntime("-g anything", "--strict");
+        return createRuntime("-g", "anything", "--strict");
     }
 
     private Runtime createNonStrictRuntime() {
-        return createRuntime("-g anything");
+        return createRuntime("-g", "anything");
     }
 
     private Runtime createRuntime(String... runtimeArgs) {

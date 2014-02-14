@@ -28,6 +28,9 @@ public class UndefinedStepsTracker {
         for (Step step : undefinedSteps) {
             for (Backend backend : backends) {
                 String snippet = backend.getSnippet(step);
+                if (snippet == null) {
+                    throw new NullPointerException("null snippet");
+                }
                 if (!snippets.contains(snippet)) {
                     snippets.add(snippet);
                 }
